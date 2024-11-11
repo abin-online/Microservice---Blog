@@ -1,9 +1,9 @@
-import express , {Request , Response } from "express";
+import express, { Request, Response } from "express";
 import User from '../model/userModel';
-
+import produce from "../kafka/producer";
 
 class UserController {
-    signup = async (req: Request, res: Response) => {
+    signup = async (req: Request, res: Response): Promise<any> => {
         try {
             const { username, email, password, phone } = req.body
 
@@ -14,6 +14,14 @@ class UserController {
 
             // Create a new user document
             const userDetails = await User.create({ username, email, password, phone });
+
+            try {
+                console.log('kafka')
+                await produce('add-user', JSON.stringify(req.body))
+            } catch (error) {
+                console.log('Kafka producer add-user error')
+                console.log(error)
+            }
 
             res.status(201).send({
                 message: 'User added successfully',
@@ -26,7 +34,7 @@ class UserController {
         }
     }
 
-    login = async (req: Request, res: Response) => {
+    login = async (req: Request, res: Response): Promise<any> => {
         try {
             const { email, password } = req.body;
 
