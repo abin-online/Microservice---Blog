@@ -5,7 +5,12 @@ dotenv.config();
 
 const dbConnection = async () : Promise<void> => {
     try {
-        await mongoose.connect(process.env.MONGODB_URL as string)
+        const mongoUrl = process.env.MONGO_URL;
+        if (!mongoUrl) {
+            throw new Error("MONGO_URL environment variable is not set.");
+        }
+
+        await mongoose.connect(mongoUrl);
         console.log('COMMENT DB CONNECTED ✅')
     } catch (error) {
         console.error('Error connecting to MongoDB:', error);
