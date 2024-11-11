@@ -1,0 +1,17 @@
+{
+  "scripts": {
+    "start:auth": "cd auth && npm run start",
+    "start:post": "cd post && npm run start",
+    "start:comment": "cd comment && npm run start",
+    "start:all": "concurrently \"npm run start:auth\" \"npm run start:post\" \"npm run start:comment\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "nodemon": "^3.1.7",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  }
+}
