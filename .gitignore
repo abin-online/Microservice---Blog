@@ -1,5 +1,8 @@
-# Ignore all node_modules directories
+# Ignore node_modules in any folder
 **/node_modules/
+
+# Alternatively, to ignore only the node_modules inside the post folder
+
 
 # Ignore all log files
 *.log
