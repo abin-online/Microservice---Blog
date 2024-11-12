@@ -3,6 +3,7 @@ import User from '../model/userModel';
 import produce from "../kafka/producer";
 
 class UserController {
+    
     signup = async (req: Request, res: Response): Promise<any> => {
         try {
             const { username, email, password, phone } = req.body

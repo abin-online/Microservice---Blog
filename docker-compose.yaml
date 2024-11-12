@@ -1,0 +1,73 @@
+version: "3.7"
+
+services:
+  # Zookeeper for managing Kafka broker
+  zookeeper:
+    image: zookeeper:3.6
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    restart: always
+
+  # Kafka broker
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"  # Use 'kafka' as hostname
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    restart: always
+
+  # Auth microservice
+  auth:
+    build:
+      context: ./auth  # Path to the 'auth' microservice
+      dockerfile: Dockerfile
+    container_name: auth_service
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - KAFKA_BROKER=kafka:9092  # Connect to Kafka by service name 'kafka'
+    depends_on:
+      - kafka
+    restart: always
+
+  # Post microservice
+  post:
+    build:
+      context: ./post  # Path to the 'post' microservice
+      dockerfile: Dockerfile
+    container_name: post_service
+    ports:
+      - "3002:3000"
+    environment:
+      - PORT=3000
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      - kafka
+    restart: always
+
+  # Comment microservice
+  comment:
+    build:
+      context: ./comment  # Path to the 'comment' microservice
+      dockerfile: Dockerfile
+    container_name: comment_service
+    ports:
+      - "3003:3000"
+    environment:
+      - PORT=3000
+      - KAFKA_BROKER=kafka:9092
+    depends_on:
+      - kafka
+    restart: always
+
+networks:
+  default:
+    name: microservices_network
